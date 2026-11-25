@@ -25,8 +25,80 @@ This commands includes
 <BR>
 • Other IP Commands e.g. show ip route etc.
 <BR>
+## Program
+server.py
 
+```python
+import socket
+from pythonping import ping
+
+s = socket.socket()
+s.bind(('localhost', 8000))
+s.listen(5)
+print("Server listening on port 8000...")
+
+c, addr = s.accept()
+print(f"Connection from {addr}")
+
+while True:
+    try:
+        hostname = c.recv(1024).decode('utf-8')
+        if not hostname or hostname.lower() == 'exit':
+            print("Client disconnected.")
+            break
+
+        response = ping(hostname, verbose=False, count=4)
+        c.send(str(response).encode('utf-8'))
+
+    except Exception as e:
+        c.send(f"Ping failed: {e}".encode('utf-8'))
+
+c.close()
+```
+client.py
+
+```python
+import socket
+
+s = socket.socket()
+s.connect(('localhost', 8000))
+
+while True:
+    ip = input("Enter the website you want to ping (or type 'exit' to quit): ")
+    s.send(ip.encode('utf-8'))
+
+    if ip.lower() == 'exit':
+        break
+
+    print(s.recv(4096).decode('utf-8'))
+
+s.close()
+```
 ## Output
+<img width="819" height="516" alt="image" src="https://github.com/user-attachments/assets/b961de64-c104-4e7d-920d-48a8f5a588db" />
+
+<img width="819" height="516" alt="image" src="https://github.com/user-attachments/assets/d7e31164-3427-4f8c-80d0-5818283370ba" />
+ 
+traceroute
+
+<img width="820" height="396" alt="image" src="https://github.com/user-attachments/assets/a7c327ac-bccf-48bc-869a-01db98a4a8be" />
+
+ipconfig
+
+<img width="819" height="598" alt="image" src="https://github.com/user-attachments/assets/9fa61881-f992-4ec0-ade8-52453f5f7dc7" />
+
+nslookup
+
+<img width="816" height="816" alt="image" src="https://github.com/user-attachments/assets/14261bf6-e5ba-4f5d-9ae0-592db7adb06f" />
+
+netstat
+
+<img width="820" height="501" alt="image" src="https://github.com/user-attachments/assets/546f4a57-f764-4972-8d90-0170798c845b" />
+
+tcpdump
+
+<img width="816" height="510" alt="image" src="https://github.com/user-attachments/assets/82cdb94e-a1ae-4fc8-80af-64906c2f93df" />
+
 
 ## Result
 Thus Execution of Network commands Performed 
